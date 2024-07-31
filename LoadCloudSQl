@@ -1,0 +1,4 @@
+gcloud sql import csv your-instance-name gs://your-bucket-name/your-filename.csv \
+    --database=your-database-name \
+    --table=your-table-name \
+    --project=your-project
