@@ -1,0 +1,15 @@
+WITH data AS (
+  -- Assume you have a table or input with H3 cells at resolution 6
+  SELECT '86283473fffffff' AS h3_6_cell -- Example H3 cell at resolution 6
+)
+
+-- Find H3_8 from H3_6 and count distinct H3_8
+SELECT
+  COUNT(DISTINCT h3_8_cell) AS distinct_h3_8_count
+FROM (
+  SELECT
+    h3_6_cell,
+    H3_TOCHILDREN(h3_6_cell, 8) AS h3_8_cells -- Generate H3 cells at resolution 8 from H3 resolution 6
+  FROM data
+)
+CROSS JOIN UNNEST(h3_8_cells) AS h3_8_cell;
