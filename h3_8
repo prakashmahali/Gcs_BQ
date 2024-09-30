@@ -1,0 +1,16 @@
+WITH data AS (
+  SELECT '85283473fffffff' AS h3_cell_id -- example H3 cell at resolution 6
+)
+
+-- Generate children for each H3 cell and split the array into individual rows
+SELECT
+  h3_cell_id,
+  child_cell_id
+FROM (
+  SELECT
+    h3_cell_id,
+    H3_TOCHILDREN(h3_cell_id, 7) AS child_cells -- generate children at resolution 7
+  FROM data
+)
+-- Unnest the array to split it into rows
+CROSS JOIN UNNEST(child_cells) AS child_cell_id;
