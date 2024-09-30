@@ -1,0 +1,22 @@
+WITH data AS (
+  -- Assume you have a table or input with H3 cells at resolution 10
+  SELECT '8a283473fffffff' AS h3_10_cell -- Example H3 cell at resolution 10
+)
+
+-- Find H3_6 from H3_10, then count distinct H3_8 and H3_10 under that H3_6
+SELECT 
+  h3_6_cell,
+  COUNT(DISTINCT h3_8_cell) AS distinct_h3_8_count,
+  COUNT(DISTINCT h3_10_cell) AS distinct_h3_10_count
+FROM (
+  -- Step 1: Get the H3_6 parent from H3_10 and generate H3_8 and H3_10 cells under H3_6
+  SELECT
+    H3_TO_PARENT(h3_10_cell, 6) AS h3_6_cell, -- Find H3_6 parent from H3_10
+    H3_TOCHILDREN(H3_TO_PARENT(h3_10_cell, 6), 8) AS h3_8_cells, -- Generate H3_8 cells under H3_6
+    H3_TOCHILDREN(H3_TO_PARENT(h3_10_cell, 6), 10) AS h3_10_cells -- Generate H3_10 cells under H3_6
+  FROM data
+)
+-- Step 2: Unnest H3_8 and H3_10 arrays to count distinct values
+CROSS JOIN UNNEST(h3_8_cells) AS h3_8_cell
+CROSS JOIN UNNEST(h3_10_cells) AS h3_10_cell
+GROUP BY h3_6_cell;
