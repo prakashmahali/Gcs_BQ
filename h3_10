@@ -1,0 +1,10 @@
+-- Example query to get latitude and longitude from H3 index
+WITH h3_data AS (
+  SELECT '8a2a1072b59ffff' AS h3_index  -- Replace this with your H3 index
+)
+
+SELECT 
+  h3_index,
+  ST_Y(ST_GEOGPOINT(ST_X(ST_GEOGPOINTFROMH3(h3_index)))) AS latitude,
+  ST_X(ST_GEOGPOINT(ST_X(ST_GEOGPOINTFROMH3(h3_index)))) AS longitude
+FROM h3_data;
