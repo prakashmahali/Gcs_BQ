@@ -1,19 +1,13 @@
-WITH coordinates AS (
-  SELECT ST_GeogPoint(longitude, latitude) AS point
-  FROM UNNEST([
-    STRUCT(-122.4194 AS longitude, 37.7749 AS latitude),  -- Example: San Francisco
-    STRUCT(-74.0060 AS longitude, 40.7128 AS latitude)    -- Example: New York
-  ])
-),
-timezones AS (
-  SELECT
-    timezone_name,
-    timezone_boundary
-  FROM `bigquery-public-data.timezone_boundaries.table` -- replace with actual dataset
+WITH location AS (
+  SELECT ST_GEOGPOINT(lon, lat) AS point
+  FROM UNNEST([STRUCT(34.0522 AS lat, -118.2437 AS lon)]) -- Replace with your lat/lon
 )
 SELECT
-  t.timezone_name,
-  c.point
-FROM coordinates c
-JOIN timezones t
-ON ST_Contains(t.timezone_boundary, c.point)
+  tz.time_zone,
+  tz.utc_offset
+FROM
+  bigquery-public-data.world_geography.timezone_boundary AS tz
+JOIN
+  location
+ON
+  ST_CONTAINS(tz.timezone_geometry, location.point)
