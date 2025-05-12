@@ -1,0 +1,12 @@
+SELECT
+  ip_address,
+  (
+    SELECT STRING_AGG(
+      LPAD(part, 4, '0'), ':'
+    )
+    FROM UNNEST(SPLIT(ip_address, ':')) AS part
+  ) AS ipv6_normalized
+FROM
+  my_table
+WHERE
+  REGEXP_CONTAINS(ip_address, r':')  -- basic filter for potential IPv6
